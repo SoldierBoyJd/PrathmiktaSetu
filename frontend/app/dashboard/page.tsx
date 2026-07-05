@@ -1,8 +1,15 @@
 "use client";
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { MetricCard } from "@/components/dashboard/MetricCard";
+import { StatCard } from "@/components/dashboard/StatCard";
+import { DataTable } from "@/components/dashboard/DataTable";
+import { ChartCard } from "@/components/dashboard/ChartCard";
+import { PriorityBadge } from "@/components/dashboard/PriorityBadge";
+import { StatusChip } from "@/components/dashboard/StatusChip";
+import { AIRecommendationCard } from "@/components/dashboard/AIRecommendationCard";
 import {
+  BarChart,
+  Bar,
   LineChart,
   Line,
   PieChart,
@@ -15,381 +22,277 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import Link from "next/link";
-import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 
-const complaintsData = [
-  { date: "May 20", total: 3200, resolved: 2400, pending: 800 },
-  { date: "May 27", total: 4100, resolved: 2900, pending: 1200 },
-  { date: "Jun 03", total: 5500, resolved: 4000, pending: 1500 },
-  { date: "Jun 10", total: 6800, resolved: 5100, pending: 1700 },
-  { date: "Jun 17", total: 7200, resolved: 5800, pending: 1400 },
-  { date: "Jun 20", total: 7892, resolved: 6200, pending: 1692 },
+const trendsData = [
+  { name: "Week 1", total: 240, resolved: 120, pending: 85 },
+  { name: "Week 2", total: 300, resolved: 150, pending: 120 },
+  { name: "Week 3", total: 280, resolved: 140, pending: 110 },
+  { name: "Week 4", total: 350, resolved: 200, pending: 120 },
 ];
 
 const categoriesData = [
-  { name: "Roads", value: 28.4, color: "#1e8e3e" },
-  { name: "Water Supply", value: 22.1, color: "#f57c00" },
-  { name: "Sanitation", value: 17.6, color: "#0369a1" },
-  { name: "Electricity", value: 13.2, color: "#7c3aed" },
-  { name: "Waste Mgmt", value: 9.8, color: "#06b6d4" },
-  { name: "Others", value: 8.9, color: "#6b7280" },
+  { name: "Roads", value: 35, color: "#1e8e3e" },
+  { name: "Water", value: 25, color: "#f57c00" },
+  { name: "Electricity", value: 20, color: "#0369a1" },
+  { name: "Sanitation", value: 15, color: "#7c3aed" },
+  { name: "Other", value: 5, color: "#06b6d4" },
+];
+
+const recentComplaints = [
+  {
+    id: "PS-001234",
+    title: "Pothole on Main Road",
+    location: "Ward 12, Sector A",
+    category: "Roads",
+    priority: "high" as const,
+    status: "in-progress" as const,
+    date: "2 hours ago",
+  },
+  {
+    id: "PS-001233",
+    title: "Water Pipeline Leak",
+    location: "Ward 7, Sector C",
+    category: "Water Supply",
+    priority: "critical" as const,
+    status: "open" as const,
+    date: "4 hours ago",
+  },
+  {
+    id: "PS-001232",
+    title: "Street Light Not Working",
+    location: "Ward 4, Sector B",
+    category: "Electricity",
+    priority: "medium" as const,
+    status: "resolved" as const,
+    date: "1 day ago",
+  },
+  {
+    id: "PS-001231",
+    title: "Garbage Not Collected",
+    location: "Ward 15, Sector D",
+    category: "Sanitation",
+    priority: "high" as const,
+    status: "pending" as const,
+    date: "2 days ago",
+  },
+  {
+    id: "PS-001230",
+    title: "Drainage Overflow",
+    location: "Ward 9, Sector A",
+    category: "Sanitation",
+    priority: "high" as const,
+    status: "in-progress" as const,
+    date: "2 days ago",
+  },
+];
+
+const recommendations = [
+  {
+    title: "Urgent: High-Concentration Pothole Zone",
+    description: "Ward 12 has 23 pothole complaints in the last week. Prioritize immediate repair.",
+    impact: "high" as const,
+    actionable: true,
+  },
+  {
+    title: "Seasonal Water Supply Surge",
+    description: "Water complaints increase 40% during monsoon. Pre-position repair teams.",
+    impact: "high" as const,
+    actionable: true,
+  },
+  {
+    title: "Optimize Service Routes",
+    description: "Clustering analysis suggests consolidating collections in Sectors B&C.",
+    impact: "medium" as const,
+    actionable: true,
+  },
+  {
+    title: "Community Satisfaction Alert",
+    description: "Roads category satisfaction dropped 12%. Consider increasing funding.",
+    impact: "medium" as const,
+    actionable: false,
+  },
 ];
 
 export default function DashboardPage() {
   return (
     <DashboardLayout>
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard
+      <div className="space-y-8">
+      {/* Page Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground mt-1">
+          Real-time insights into your constituency&apos;s infrastructure and citizen complaints
+        </p>
+      </div>
+
+      {/* KPI Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard
           title="Total Complaints"
           value="12,842"
-          trend="+18.6% vs last 30 days"
-          trendUp={true}
-          icon="📊"
+          subtitle="All time"
+          trend={{ value: 18.6, isPositive: true }}
+          icon="📋"
         />
-        <MetricCard
-          title="Pending"
+        <StatCard
+          title="Pending Resolution"
           value="4,283"
-          trend="+12.4% vs last 30 days"
-          trendUp={true}
+          subtitle="Action needed"
+          trend={{ value: 12.4, isPositive: true }}
           icon="⏳"
         />
-        <MetricCard
-          title="Resolved"
+        <StatCard
+          title="Successfully Resolved"
           value="7,892"
-          trend="+24.1% vs last 30 days"
-          trendUp={true}
-          icon="✓"
+          subtitle="Completion rate"
+          trend={{ value: 24.1, isPositive: true }}
+          icon="✅"
         />
-        <MetricCard
+        <StatCard
           title="Emergency Alerts"
           value="243"
-          trend="-6.3% vs last 30 days"
-          trendUp={false}
+          subtitle="Critical issues"
+          trend={{ value: 6.3, isPositive: false }}
           icon="🚨"
         />
       </div>
 
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        {/* Complaints Trend Chart */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-border p-4 md:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg md:text-xl font-bold text-foreground">Complaints Trend</h2>
-            <select className="text-sm px-3 py-1 border border-border rounded-lg">
-              <option>30 Days</option>
-              <option>60 Days</option>
-              <option>90 Days</option>
-            </select>
-          </div>
-          <div className="h-64 md:h-80 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={complaintsData}>
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Trends Chart */}
+        <div className="lg:col-span-2">
+          <ChartCard title="Complaint Trends" subtitle="4-week overview">
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={trendsData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="date" stroke="#6b7280" />
-                <YAxis stroke="#6b7280" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
-                  }}
-                />
+                <XAxis dataKey="name" stroke="#6b7280" style={{ fontSize: 12 }} />
+                <YAxis stroke="#6b7280" style={{ fontSize: 12 }} />
+                <Tooltip contentStyle={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb" }} />
                 <Legend />
                 <Line
                   type="monotone"
                   dataKey="total"
                   stroke="#1e8e3e"
                   strokeWidth={2}
-                  dot={{ fill: "#1e8e3e", r: 4 }}
-                  activeDot={{ r: 6 }}
+                  dot={false}
                 />
                 <Line
                   type="monotone"
                   dataKey="resolved"
                   stroke="#0369a1"
                   strokeWidth={2}
-                  dot={{ fill: "#0369a1", r: 4 }}
-                  activeDot={{ r: 6 }}
+                  dot={false}
                 />
                 <Line
                   type="monotone"
                   dataKey="pending"
                   stroke="#f57c00"
                   strokeWidth={2}
-                  dot={{ fill: "#f57c00", r: 4 }}
-                  activeDot={{ r: 6 }}
+                  dot={false}
                 />
               </LineChart>
             </ResponsiveContainer>
-          </div>
+          </ChartCard>
         </div>
 
-        {/* Top Issue Categories */}
-        <div className="bg-white rounded-2xl border border-border p-4 md:p-6">
-          <h2 className="text-lg md:text-xl font-bold text-foreground mb-6">
-            Top Issue Categories
-          </h2>
-          <div className="h-64 md:h-80 flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={categoriesData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, value }) => `${name} ${value.toFixed(1)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {categoriesData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value) => `${value.toFixed(1)}%`} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+        {/* Categories Pie Chart */}
+        <ChartCard title="Complaint Categories" subtitle="Distribution">
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={categoriesData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, value }) => `${name} ${value}%`}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {categoriesData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </ChartCard>
+      </div>
+
+      {/* Recommendations Section */}
+      <div>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-foreground">AI-Powered Recommendations</h2>
+          <p className="text-muted-foreground mt-1">
+            Data-driven insights to optimize your governance
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {recommendations.map((rec, idx) => (
+            <AIRecommendationCard
+              key={idx}
+              title={rec.title}
+              description={rec.description}
+              impact={rec.impact}
+              actionable={rec.actionable}
+            />
+          ))}
         </div>
       </div>
 
       {/* Recent Complaints Table */}
-      <div className="bg-white rounded-2xl border border-border p-4 md:p-6 mb-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-          <h2 className="text-lg md:text-xl font-bold text-foreground">Recent Complaints</h2>
-          <Link
-            href="/issues"
-            className="text-sm text-primary hover:text-primary/80 font-semibold flex items-center gap-1"
-          >
-            View all complaints →
-          </Link>
+      <div>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-foreground">Recent Complaints</h2>
+          <p className="text-muted-foreground mt-1">Latest citizen-reported issues</p>
         </div>
-
-        {/* Mobile Card View */}
-        <div className="md:hidden space-y-3">
-          {[
+        <DataTable
+          columns={[
+            { id: "id", label: "ID", width: "w-24" },
+            { id: "title", label: "Issue" },
+            { id: "location", label: "Location" },
             {
-              id: "PS-12842",
-              issue: "Potholes on Main Road",
-              location: "Ward 12",
-              priority: "High",
-              status: "Pending",
+              id: "priority",
+              label: "Priority",
+              render: (value) => <PriorityBadge priority={value} />,
             },
             {
-              id: "PS-12841",
-              issue: "Water leakage in pipeline",
-              location: "Ward 7",
-              priority: "Medium",
-              status: "In Progress",
+              id: "status",
+              label: "Status",
+              render: (value) => <StatusChip status={value} />,
             },
-            {
-              id: "PS-12840",
-              issue: "Street light not working",
-              location: "Ward 4",
-              priority: "Low",
-              status: "Resolved",
-            },
-          ].map((complaint) => (
-            <Link
-              key={complaint.id}
-              href={`/issues/${complaint.id}`}
-              className="block p-4 border border-border rounded-lg hover:bg-muted transition-colors"
-            >
-              <div className="flex items-start justify-between gap-2 mb-2">
-                <span className="font-semibold text-foreground text-sm">{complaint.id}</span>
-                <span
-                  className={`px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-                    complaint.status === "Resolved"
-                      ? "bg-green-100 text-green-800"
-                      : complaint.status === "In Progress"
-                      ? "bg-blue-100 text-blue-800"
-                      : "bg-orange-100 text-orange-800"
-                  }`}
-                >
-                  {complaint.status}
-                </span>
-              </div>
-              <p className="font-medium text-foreground mb-1">{complaint.issue}</p>
-              <p className="text-xs text-muted-foreground mb-2">{complaint.location}</p>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`px-2 py-0.5 text-xs font-semibold rounded ${
-                    complaint.priority === "High"
-                      ? "bg-red-100 text-red-800"
-                      : complaint.priority === "Medium"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : "bg-gray-100 text-gray-800"
-                  }`}
-                >
-                  {complaint.priority}
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Desktop Table View */}
-        <div className="hidden md:overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left py-3 px-4 font-semibold text-foreground">ID</th>
-                <th className="text-left py-3 px-4 font-semibold text-foreground">Issue</th>
-                <th className="text-left py-3 px-4 font-semibold text-foreground">Location</th>
-                <th className="text-left py-3 px-4 font-semibold text-foreground">Priority</th>
-                <th className="text-left py-3 px-4 font-semibold text-foreground">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                {
-                  id: "PS-12842",
-                  issue: "Potholes on Main Road",
-                  location: "Ward 12",
-                  priority: "High",
-                  status: "Pending",
-                },
-                {
-                  id: "PS-12841",
-                  issue: "Water leakage in pipeline",
-                  location: "Ward 7",
-                  priority: "Medium",
-                  status: "In Progress",
-                },
-                {
-                  id: "PS-12840",
-                  issue: "Street light not working",
-                  location: "Ward 4",
-                  priority: "Low",
-                  status: "Resolved",
-                },
-                {
-                  id: "PS-12839",
-                  issue: "Garbage not collected",
-                  location: "Ward 15",
-                  priority: "Medium",
-                  status: "Pending",
-                },
-                {
-                  id: "PS-12838",
-                  issue: "Drain overflow",
-                  location: "Ward 9",
-                  priority: "High",
-                  status: "In Progress",
-                },
-              ].map((complaint) => (
-                <tr key={complaint.id} className="border-b border-border hover:bg-muted">
-                  <td className="py-3 px-4 font-semibold text-foreground">{complaint.id}</td>
-                  <td className="py-3 px-4 text-foreground">{complaint.issue}</td>
-                  <td className="py-3 px-4 text-muted-foreground">{complaint.location}</td>
-                  <td className="py-3 px-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        complaint.priority === "High"
-                          ? "bg-red-100 text-red-800"
-                          : complaint.priority === "Medium"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {complaint.priority}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        complaint.status === "Resolved"
-                          ? "bg-green-100 text-green-800"
-                          : complaint.status === "In Progress"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-orange-100 text-orange-800"
-                      }`}
-                    >
-                      {complaint.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            { id: "date", label: "Date", width: "w-32" },
+          ]}
+          data={recentComplaints}
+          onRowClick={(row) => console.log("Clicked:", row)}
+        />
       </div>
 
-      {/* Quick Actions & Recommendations */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Quick Actions */}
-        <div className="bg-white rounded-2xl border border-border p-4 md:p-6">
-          <h2 className="text-lg md:text-xl font-bold text-foreground mb-4">Quick Actions</h2>
-          <div className="space-y-3">
-            <Link
-              href="/submit"
-              className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted transition-colors"
-            >
-              <span className="font-medium text-foreground">Add Complaint</span>
-              <ArrowUpRight size={18} className="text-primary" />
-            </Link>
-            <Link
-              href="/dashboard/reports"
-              className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted transition-colors"
-            >
-              <span className="font-medium text-foreground">Generate Report</span>
-              <ArrowUpRight size={18} className="text-primary" />
-            </Link>
-            <Link
-              href="/dashboard/emergencies"
-              className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted transition-colors"
-            >
-              <span className="font-medium text-foreground">Broadcast Alert</span>
-              <ArrowUpRight size={18} className="text-primary" />
-            </Link>
-            <Link
-              href="/track"
-              className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted transition-colors"
-            >
-              <span className="font-medium text-foreground">Download Data</span>
-              <ArrowUpRight size={18} className="text-primary" />
-            </Link>
-          </div>
+      {/* Quick Stats Footer */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-border">
+        <div>
+          <p className="text-sm font-medium text-muted-foreground mb-2">
+            Average Resolution Time
+          </p>
+          <p className="text-3xl font-bold text-foreground">4.2 days</p>
+          <p className="text-xs text-green-600 mt-2">↓ 8% improvement</p>
         </div>
-
-        {/* AI Recommendations Preview */}
-        <div className="bg-white rounded-2xl border border-border p-4 md:p-6">
-          <h2 className="text-lg md:text-xl font-bold text-foreground mb-4">
-            AI Priority Recommendations
-          </h2>
-          <div className="space-y-3">
-            {[
-              { title: "Improve road conditions in Ward 12", impact: "High", score: 92 },
-              { title: "Fix water supply leakage in Ward 7", impact: "High", score: 88 },
-              { title: "Upgrade sanitation facilities", impact: "Medium", score: 75 },
-            ].map((rec, i) => (
-              <div key={i} className="p-3 border border-border rounded-lg">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <p className="font-medium text-foreground text-sm">{rec.title}</p>
-                  <span className="text-lg font-bold text-primary">{rec.score}</span>
-                </div>
-                <span
-                  className={`text-xs font-semibold px-2 py-1 rounded ${
-                    rec.impact === "High"
-                      ? "bg-red-100 text-red-800"
-                      : "bg-yellow-100 text-yellow-800"
-                  }`}
-                >
-                  {rec.impact} Impact
-                </span>
-              </div>
-            ))}
-          </div>
-          <Link
-            href="/dashboard/recommendations"
-            className="mt-4 w-full py-2 px-4 bg-primary text-white rounded-lg font-semibold text-center hover:bg-primary/90 transition-colors"
-          >
-            View All Recommendations
-          </Link>
+        <div>
+          <p className="text-sm font-medium text-muted-foreground mb-2">
+            Citizen Satisfaction
+          </p>
+          <p className="text-3xl font-bold text-foreground">78%</p>
+          <p className="text-xs text-green-600 mt-2">↑ 3% increase</p>
+        </div>
+        <div>
+          <p className="text-sm font-medium text-muted-foreground mb-2">
+            On-Time Resolution Rate
+          </p>
+          <p className="text-3xl font-bold text-foreground">82%</p>
+          <p className="text-xs text-orange-600 mt-2">↓ 2% decline</p>
         </div>
       </div>
+    </div>
     </DashboardLayout>
   );
 }
