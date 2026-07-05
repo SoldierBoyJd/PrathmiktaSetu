@@ -29,8 +29,8 @@ interface Issue {
 
 export default function IssuesFeedPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedStatus, setSelectedStatus] = useState('all');
 
   const issues: Issue[] = [
     {
@@ -132,7 +132,7 @@ export default function IssuesFeedPage() {
       <nav className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur">
         <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
           <Link href="/" className="font-semibold text-foreground">PRATHMIKTA SETU</Link>
-          <Button asChild>
+          <Button>
             <Link href="/submit">Report Issue</Link>
           </Button>
         </div>
@@ -158,12 +158,12 @@ export default function IssuesFeedPage() {
                 className="pl-10"
               />
             </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select value={selectedCategory} onValueChange={(value) => setSelectedCategory(value || 'all')}>
               <SelectTrigger className="w-full md:w-48">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 <SelectItem value="Roads & Infrastructure">Roads & Infrastructure</SelectItem>
                 <SelectItem value="Water Supply">Water Supply</SelectItem>
                 <SelectItem value="Sanitation">Sanitation</SelectItem>
@@ -171,12 +171,12 @@ export default function IssuesFeedPage() {
                 <SelectItem value="Waste Management">Waste Management</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+            <Select value={selectedStatus} onValueChange={(value) => setSelectedStatus(value || 'all')}>
               <SelectTrigger className="w-full md:w-48">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Status</SelectItem>
+                <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="in-progress">In Progress</SelectItem>
                 <SelectItem value="resolved">Resolved</SelectItem>
@@ -237,7 +237,7 @@ export default function IssuesFeedPage() {
             <Card>
               <CardContent className="pt-8 text-center">
                 <p className="text-muted-foreground mb-4">No issues found</p>
-                <Button asChild>
+                <Button>
                   <Link href="/submit">Report a New Issue</Link>
                 </Button>
               </CardContent>

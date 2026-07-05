@@ -98,7 +98,7 @@ export default function TrackComplaintPage() {
       {/* Navigation */}
       <nav className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur">
         <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
-          <Button asChild variant="ghost" className="gap-2">
+          <Button variant="ghost" className="gap-2">
             <Link href="/">
               <ArrowLeft className="w-4 h-4" />
               Back

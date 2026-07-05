@@ -54,7 +54,7 @@ export default function LandingPage() {
             <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground transition">
               Sign In
             </Link>
-            <Button asChild>
+            <Button>
               <Link href="/submit">Submit a Complaint</Link>
             </Button>
           </div>
@@ -71,12 +71,12 @@ export default function LandingPage() {
             PRATHMIKTA SETU is a citizen-centric complaint management system that ensures every voice is heard and every issue is resolved with transparency and accountability.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-            <Button asChild size="lg" className="gap-2">
+            <Button size="lg" className="gap-2">
               <Link href="/submit">
                 Report an Issue <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg">
+            <Button variant="outline" size="lg">
               <Link href="/issues">View All Issues</Link>
             </Button>
           </div>
@@ -154,7 +154,7 @@ export default function LandingPage() {
           <p className="text-lg text-muted-foreground">
             Submit your complaint today and help us build better communities together.
           </p>
-          <Button asChild size="lg" className="gap-2">
+          <Button size="lg" className="gap-2">
             <Link href="/submit">
               Get Started <ArrowRight className="w-4 h-4" />
             </Link>

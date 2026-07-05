@@ -56,7 +56,7 @@ export default function SubmitComplaintPage() {
       {/* Navbar */}
       <nav className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur">
         <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
-          <Button asChild variant="ghost" className="gap-2">
+          <Button variant="ghost" className="gap-2">
             <Link href="/">
               <ArrowLeft className="w-4 h-4" />
               Back
@@ -82,10 +82,10 @@ export default function SubmitComplaintPage() {
                   You will receive updates via email. Track your complaint status anytime.
                 </p>
                 <div className="flex gap-4 justify-center pt-4">
-                  <Button asChild>
+                  <Button>
                     <Link href="/issues">View All Issues</Link>
                   </Button>
-                  <Button asChild variant="outline">
+                  <Button variant="outline">
                     <Link href="/">Back to Home</Link>
                   </Button>
                 </div>
@@ -146,7 +146,7 @@ export default function SubmitComplaintPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="category">Category *</Label>
-                        <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                        <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value || "" || '' })}>
                           <SelectTrigger id="category">
                             <SelectValue placeholder="Select category" />
                           </SelectTrigger>
@@ -159,7 +159,7 @@ export default function SubmitComplaintPage() {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="priority">Priority *</Label>
-                        <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
+                        <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value || "" })}>
                           <SelectTrigger id="priority">
                             <SelectValue />
                           </SelectTrigger>
@@ -180,7 +180,7 @@ export default function SubmitComplaintPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="ward">Ward *</Label>
-                        <Select value={formData.ward} onValueChange={(value) => setFormData({ ...formData, ward: value })}>
+                        <Select value={formData.ward} onValueChange={(value) => setFormData({ ...formData, ward: value || "" })}>
                           <SelectTrigger id="ward">
                             <SelectValue placeholder="Select ward" />
                           </SelectTrigger>
@@ -235,7 +235,7 @@ export default function SubmitComplaintPage() {
                   {/* Submit Button */}
                   <div className="flex gap-4 pt-4">
                     <Button type="submit" className="flex-1">Submit Complaint</Button>
-                    <Button type="button" variant="outline" asChild className="flex-1">
+                    <Button type="button" variant="outline" className="flex-1">
                       <Link href="/">Cancel</Link>
                     </Button>
                   </div>

@@ -88,7 +88,7 @@ export default function BudgetPage() {
                     backgroundColor: 'var(--card)',
                     border: '1px solid var(--border)',
                   }}
-                  formatter={(value) => `₹${(value / 1000000).toFixed(2)}M`}
+                  formatter={(value: any) => `₹${(value / 1000000).toFixed(2)}M`}
                 />
                 <Legend />
                 <Bar dataKey="allocated" fill="var(--chart-1)" name="Allocated" />
@@ -116,7 +116,7 @@ export default function BudgetPage() {
                     backgroundColor: 'var(--card)',
                     border: '1px solid var(--border)',
                   }}
-                  formatter={(value) => `₹${(value / 1000000).toFixed(2)}M`}
+                  formatter={(value: any) => `₹${(value / 1000000).toFixed(2)}M`}
                 />
                 <Legend />
                 <Line type="monotone" dataKey="budgeted" stroke="var(--muted-foreground)" strokeWidth={2} name="Budgeted" />

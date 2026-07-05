@@ -92,12 +92,10 @@ export default function IssueDetailPage({ params }: { params: { id: string } }) 
       {/* Navigation */}
       <nav className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur">
         <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
-          <Button asChild variant="ghost" className="gap-2">
-            <Link href="/issues">
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </Link>
-          </Button>
+          <Link href="/issues" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </Link>
           <div className="font-semibold text-foreground">{issue.id}</div>
           <div className="w-20" />
         </div>
@@ -274,10 +272,10 @@ export default function IssueDetailPage({ params }: { params: { id: string } }) 
                   <CardTitle className="text-lg">Related</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Button asChild variant="outline" className="w-full justify-start">
+                  <Button variant="outline" className="w-full justify-start">
                     <Link href="/issues">View All Issues</Link>
                   </Button>
-                  <Button asChild variant="outline" className="w-full justify-start">
+                  <Button variant="outline" className="w-full justify-start">
                     <Link href="/submit">Report Similar Issue</Link>
                   </Button>
                 </CardContent>
