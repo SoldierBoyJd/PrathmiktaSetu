@@ -28,9 +28,9 @@ export default function CitizenSubmitPage() {
         <p className="text-[#71717b] text-sm">Raise infrastructure issues &amp; local needs for your constituency</p>
       </div>
 
-      <div className="grid grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
         {/* Main form */}
-        <div className="col-span-8 flex flex-col gap-5">
+        <div className="col-span-full xl:col-span-8 flex flex-col gap-5">
           {/* Complaint Details */}
           <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-6 flex flex-col gap-5">
             <div>
@@ -156,7 +156,7 @@ export default function CitizenSubmitPage() {
         </div>
 
         {/* Sidebar */}
-        <div className="col-span-4">
+        <div className="col-span-full xl:col-span-4">
           <div className="sticky top-20 flex flex-col gap-5">
             {/* AI Guidance */}
             <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-5 flex flex-col gap-4">
