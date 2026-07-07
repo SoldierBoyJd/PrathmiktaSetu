@@ -2,181 +2,106 @@
 
 import { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { PageHeader } from "@/components/ui/page-header";
-import { AlertTriangle, CheckCircle, Clock, Send, X } from "lucide-react";
+import { AlertTriangle, CheckCircle, Clock, Send, X, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const alerts = [
-  {
-    id: "EA-001",
-    title: "Flash Flood Warning – Ward 9",
-    description: "Heavy rainfall forecast. Drain overflow imminent at Sector B and C. Immediate evacuation advisory for low-lying areas.",
-    type: "Critical",
-    timestamp: "20 Jun 2025, 08:15 AM",
-    affectedWards: ["Ward 9", "Ward 10"],
-    status: "Active",
-  },
-  {
-    id: "EA-002",
-    title: "Water Contamination – Ward 8",
-    description: "Lab tests indicate bacterial contamination in the main supply line. Do not use tap water for drinking or cooking.",
-    type: "Critical",
-    timestamp: "19 Jun 2025, 06:30 PM",
-    affectedWards: ["Ward 8"],
-    status: "Active",
-  },
-  {
-    id: "EA-003",
-    title: "Road Cave-In – Ward 12, Ring Road",
-    description: "Partial road collapse detected on Ring Road near km 4.2. Traffic diversion in place. Repair crew dispatched.",
-    type: "Warning",
-    timestamp: "19 Jun 2025, 02:45 PM",
-    affectedWards: ["Ward 12"],
-    status: "In Progress",
-  },
-  {
-    id: "EA-004",
-    title: "Power Outage – Ward 5, Sector A",
-    description: "Transformer failure. 1,200 households without power. Replacement unit being installed. ETA: 6 hours.",
-    type: "Warning",
-    timestamp: "18 Jun 2025, 11:00 AM",
-    affectedWards: ["Ward 5"],
-    status: "In Progress",
-  },
-  {
-    id: "EA-005",
-    title: "Disease Outbreak Monitoring – Ward 3",
-    description: "Cluster of fever cases reported. Health team deployed for door-to-door screening. No confirmed outbreak yet.",
-    type: "Info",
-    timestamp: "17 Jun 2025, 09:20 AM",
-    affectedWards: ["Ward 3"],
-    status: "Resolved",
-  },
+  { id: "EA-001", title: "Flash Flood Warning – Ward 9", desc: "Heavy rainfall forecast. Drain overflow imminent at Sector B and C. Immediate evacuation advisory for low-lying areas.", type: "Critical", time: "20 Jun 2025, 08:15 AM", wards: ["Ward 9", "Ward 10"], status: "Active" },
+  { id: "EA-002", title: "Water Contamination – Ward 8", desc: "Lab tests indicate bacterial contamination in the main supply line. Do not use tap water for drinking or cooking.", type: "Critical", time: "19 Jun 2025, 06:30 PM", wards: ["Ward 8"], status: "Active" },
+  { id: "EA-003", title: "Road Cave-In – Ward 12, Ring Road", desc: "Partial road collapse detected on Ring Road near km 4.2. Traffic diversion in place. Repair crew dispatched.", type: "Warning", time: "19 Jun 2025, 02:45 PM", wards: ["Ward 12"], status: "In Progress" },
+  { id: "EA-004", title: "Power Outage – Ward 5, Sector A", desc: "Transformer failure. 1,200 households without power. Replacement unit being installed. ETA: 6 hours.", type: "Warning", time: "18 Jun 2025, 11:00 AM", wards: ["Ward 5"], status: "In Progress" },
+  { id: "EA-005", title: "Disease Outbreak Monitoring – Ward 3", desc: "Cluster of fever cases reported. Health team deployed for door-to-door screening. No confirmed outbreak yet.", type: "Info", time: "17 Jun 2025, 09:20 AM", wards: ["Ward 3"], status: "Resolved" },
 ];
 
-const typeConfig: Record<string, { bg: string; text: string; border: string; icon: React.ReactNode }> = {
-  Critical: {
-    bg: "bg-[#FEF2F2]",
-    text: "text-[#E74C3C]",
-    border: "border-l-[#E74C3C]",
-    icon: <AlertTriangle size={16} className="text-[#E74C3C]" />,
-  },
-  Warning: {
-    bg: "bg-[#FFF7E6]",
-    text: "text-[#F5831F]",
-    border: "border-l-[#F5831F]",
-    icon: <Clock size={16} className="text-[#F5831F]" />,
-  },
-  Info: {
-    bg: "bg-[#EBF8FF]",
-    text: "text-[#2980B9]",
-    border: "border-l-[#2980B9]",
-    icon: <CheckCircle size={16} className="text-[#2980B9]" />,
-  },
+const typeConfig: Record<string, { borderCls: string; badgeCls: string; icon: React.ReactNode }> = {
+  Critical: { borderCls: "border-l-red-500", badgeCls: "bg-red-50 text-red-600", icon: <AlertTriangle size={15} className="text-red-600" /> },
+  Warning: { borderCls: "border-l-[#ff6900]", badgeCls: "bg-[#ff6900]/10 text-[#ff6900]", icon: <Clock size={15} className="text-[#ff6900]" /> },
+  Info: { borderCls: "border-l-[#1E88E5]", badgeCls: "bg-[#1E88E5]/10 text-[#1E88E5]", icon: <Bell size={15} className="text-[#1E88E5]" /> },
 };
 
-const statusConfig: Record<string, string> = {
-  Active: "bg-[#FEF2F2] text-[#E74C3C]",
-  "In Progress": "bg-[#EBF8FF] text-[#2980B9]",
-  Resolved: "bg-[#F0FDF4] text-[#27AE60]",
+const statusCls: Record<string, string> = {
+  Active: "bg-red-50 text-red-600",
+  "In Progress": "bg-[#1E88E5]/10 text-[#1E88E5]",
+  Resolved: "bg-[#1E8E3E]/10 text-[#1E8E3E]",
 };
+
+const FILTERS = ["All", "Critical", "Warning", "Info", "Active", "Resolved"];
 
 export default function EmergencyAlertsPage() {
   const [filter, setFilter] = useState("All");
-  const filters = ["All", "Critical", "Warning", "Info", "Active", "Resolved"];
 
-  const filtered = alerts.filter((a) => {
-    if (filter === "All") return true;
-    return a.type === filter || a.status === filter;
-  });
+  const filtered = alerts.filter(a =>
+    filter === "All" || a.type === filter || a.status === filter
+  );
 
   return (
-    <DashboardLayout>
-      <PageHeader
-        title="Emergency Alerts"
-        subtitle="Real-time critical alerts and emergency notifications for your constituency."
-        actions={
-          <button className="flex items-center gap-2 bg-[#E74C3C] text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-[#C0392B] transition-colors">
-            <Send size={13} />
-            Broadcast Alert
-          </button>
-        }
-      />
-
-      {/* Summary strip */}
-      <div className="grid grid-cols-4 gap-4 mb-5">
+    <DashboardLayout title="Emergency Alerts" subtitle="Real-time critical alerts and emergency notifications for your constituency.">
+      {/* Summary */}
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-5">
         {[
-          { label: "Total Alerts", value: "243", color: "#1A2332" },
-          { label: "Critical", value: "18", color: "#E74C3C" },
-          { label: "Active", value: "47", color: "#F5831F" },
-          { label: "Resolved Today", value: "12", color: "#27AE60" },
-        ].map((s) => (
-          <div key={s.label} className="bg-white rounded-xl p-4 shadow-sm border border-[#E2E8F0] flex items-center gap-3">
-            <span className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</span>
-            <span className="text-xs text-[#718096]">{s.label}</span>
+          { label: "Total Alerts", value: "243", color: "text-zinc-950" },
+          { label: "Critical", value: "18", color: "text-red-600" },
+          { label: "Active", value: "47", color: "text-[#ff6900]" },
+          { label: "Resolved Today", value: "12", color: "text-[#1E8E3E]" },
+        ].map(s => (
+          <div key={s.label} className="bg-white rounded-2xl p-4 shadow-sm border border-zinc-200 flex items-center gap-3">
+            <span className={`text-2xl font-bold ${s.color}`}>{s.value}</span>
+            <span className="text-xs text-[#71717b]">{s.label}</span>
           </div>
         ))}
       </div>
 
-      {/* Filter pills */}
-      <div className="flex items-center gap-2 mb-4 flex-wrap">
-        {filters.map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={cn(
-              "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
-              filter === f
-                ? "bg-[#2D7A3A] text-white"
-                : "bg-white border border-[#E2E8F0] text-[#4A5568] hover:bg-[#F5F7FA]"
-            )}
-          >
-            {f}
-          </button>
-        ))}
-      </div>
-
-      {/* Alerts list */}
-      <div className="space-y-3">
-        {filtered.map((alert) => {
-          const cfg = typeConfig[alert.type];
-          return (
-            <div
-              key={alert.id}
-              className={cn(
-                "bg-white rounded-xl p-4 shadow-sm border border-[#E2E8F0] border-l-4 hover:shadow-md transition-shadow",
-                cfg.border
+      {/* Actions + Filters */}
+      <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
+          {FILTERS.map(f => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={cn("px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
+                filter === f ? "bg-[#ff6900] text-orange-50" : "bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
               )}
             >
+              {f}
+            </button>
+          ))}
+        </div>
+        <button className="flex items-center gap-2 bg-red-600 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+          <Send size={13} />Broadcast Alert
+        </button>
+      </div>
+
+      {/* Alerts */}
+      <div className="space-y-3">
+        {filtered.map(alert => {
+          const cfg = typeConfig[alert.type];
+          return (
+            <div key={alert.id} className={cn("bg-white rounded-2xl p-4 shadow-sm border border-zinc-200 border-l-4 hover:shadow-md transition-shadow", cfg.borderCls)}>
               <div className="flex items-start gap-3">
-                <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0", cfg.bg)}>
+                <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0", cfg.badgeCls.replace("text-","bg-").replace("bg-","bg-").split(" ")[0] + "/10")}>
                   {cfg.icon}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-3 mb-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono text-[#A0AEC0]">{alert.id}</span>
-                      <h3 className="text-sm font-semibold text-[#1A2332]">{alert.title}</h3>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs font-mono text-[#71717b]">{alert.id}</span>
+                      <h3 className="text-sm font-semibold text-zinc-950">{alert.title}</h3>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-full", cfg.bg, cfg.text)}>
-                        {alert.type}
-                      </span>
-                      <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-full", statusConfig[alert.status])}>
-                        {alert.status}
-                      </span>
+                      <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-full", cfg.badgeCls)}>{alert.type}</span>
+                      <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-full", statusCls[alert.status])}>{alert.status}</span>
                     </div>
                   </div>
-                  <p className="text-xs text-[#718096] mb-2 leading-relaxed">{alert.description}</p>
-                  <div className="flex items-center gap-3 text-[10px] text-[#A0AEC0]">
-                    <span>{alert.timestamp}</span>
-                    <span>•</span>
-                    <span>{alert.affectedWards.join(", ")}</span>
+                  <p className="text-xs text-[#71717b] leading-relaxed mb-2">{alert.desc}</p>
+                  <div className="flex items-center gap-3 text-[10px] text-[#a1a1aa]">
+                    <span>{alert.time}</span>
+                    <span>·</span>
+                    <span>{alert.wards.join(", ")}</span>
                   </div>
                 </div>
                 {alert.status !== "Resolved" && (
-                  <button className="p-1.5 hover:bg-[#F5F7FA] rounded-lg transition-colors flex-shrink-0">
-                    <X size={13} className="text-[#A0AEC0]" />
+                  <button className="p-1.5 hover:bg-zinc-50 rounded-lg transition-colors flex-shrink-0">
+                    <X size={13} className="text-[#a1a1aa]" />
                   </button>
                 )}
               </div>

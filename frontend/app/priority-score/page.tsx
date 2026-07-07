@@ -1,129 +1,199 @@
 "use client";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { PageHeader } from "@/components/ui/page-header";
 import {
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  Radar,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
+  AlertTriangle, BarChart3, FileText, TrendingUp,
+  Waves, Droplets, Lightbulb, ChevronDown,
+} from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
-const radarData = [
-  { subject: "Roads", A: 85, fullMark: 100 },
-  { subject: "Water", A: 72, fullMark: 100 },
-  { subject: "Sanitation", A: 68, fullMark: 100 },
-  { subject: "Electricity", A: 55, fullMark: 100 },
-  { subject: "Healthcare", A: 60, fullMark: 100 },
-  { subject: "Education", A: 45, fullMark: 100 },
+const scoreCards = [
+  { label: "Total Scored Issues", value: "248", icon: FileText, iconBg: "bg-zinc-100", iconColor: "text-[#ff6900]" },
+  { label: "Average Priority Score", value: "76.4", icon: TrendingUp, iconBg: "bg-zinc-100", iconColor: "text-[#ff6900]" },
+  { label: "High Priority Count", value: "64", valColor: "text-[#ff6900]", icon: AlertTriangle, iconBg: "bg-[#ff6900]/10", iconColor: "text-[#ff6900]" },
 ];
 
-const wardScores = [
-  { ward: "Ward 12", score: 91, issues: 642, trend: "↑" },
-  { ward: "Ward 8", score: 83, issues: 481, trend: "↑" },
-  { ward: "Ward 15", score: 78, issues: 394, trend: "→" },
-  { ward: "Ward 9", score: 72, issues: 213, trend: "↓" },
-  { ward: "Ward 5", score: 65, issues: 287, trend: "↑" },
-  { ward: "Ward 3", score: 44, issues: 98, trend: "↓" },
+const distData = [
+  { range: "90-100", count: 78 }, { range: "80-89", count: 112 }, { range: "70-79", count: 96 },
+  { range: "60-69", count: 84 }, { range: "50-59", count: 58 }, { range: "40-49", count: 32 },
 ];
 
-function ScoreBar({ score }: { score: number }) {
-  const color = score >= 80 ? "#E74C3C" : score >= 60 ? "#F5831F" : "#27AE60";
-  return (
-    <div className="flex items-center gap-2 flex-1">
-      <div className="flex-1 h-2 bg-[#EDF2F7] rounded-full overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all"
-          style={{ width: `${score}%`, background: color }}
-        />
-      </div>
-      <span className="text-xs font-bold min-w-[28px] text-right" style={{ color }}>{score}</span>
-    </div>
-  );
-}
+const issues = [
+  {
+    rank: 1, score: 94, bg: "bg-[#ff6900]", textColor: "text-orange-50",
+    scoreBorder: "border-[#ff6900]/15", scoreText: "text-[#ff6900]",
+    icon: <AlertTriangle className="size-4 text-[#ff6900]" />,
+    title: "Open manhole near Sector 14 bus stand",
+    category: "Drainage", ward: "Ward 14 · Gurugram",
+    tags: ["High Urgency", "High Population Impact", "Low Cost"],
+    scores: [{ l: "Urgency Weight", v: 92 }, { l: "Population Impact", v: 88 }, { l: "Budget Efficiency", v: 76 }],
+  },
+  {
+    rank: 2, score: 89, bg: "bg-[#ff6900]/10", textColor: "text-[#ff6900]",
+    scoreBorder: "border-[#ff6900]/20", scoreText: "text-[#ff6900]",
+    icon: <Waves className="size-4 text-[#ff6900]" />,
+    title: "Severe potholes on Old Airport Road",
+    category: "Roads", ward: "Ward 8 · Bengaluru",
+    tags: ["High Urgency", "High Population Impact", "Medium Cost"],
+    scores: [{ l: "Urgency Weight", v: 86 }, { l: "Population Impact", v: 91 }, { l: "Budget Efficiency", v: 68 }],
+  },
+  {
+    rank: 3, score: 71, bg: "bg-zinc-100", textColor: "text-zinc-950",
+    scoreBorder: "border-zinc-100", scoreText: "text-zinc-950",
+    icon: <Droplets className="size-4 text-[#ff6900]" />,
+    title: "Water supply interruptions in Ward 22",
+    category: "Water", ward: "Ward 22 · Pune",
+    tags: ["Moderate Urgency", "High Population Impact", "Low Cost"],
+    scores: [{ l: "Urgency Weight", v: 64 }, { l: "Population Impact", v: 83 }, { l: "Budget Efficiency", v: 79 }],
+  },
+  {
+    rank: 4, score: 63, bg: "bg-zinc-100", textColor: "text-zinc-950",
+    scoreBorder: "border-zinc-100", scoreText: "text-zinc-950",
+    icon: <Lightbulb className="size-4 text-[#ff6900]" />,
+    title: "Non-functional street lights on MG Road",
+    category: "Electricity", ward: "Ward 3 · Indore",
+    tags: ["Moderate Urgency", "Medium Population Impact", "Low Cost"],
+    scores: [{ l: "Urgency Weight", v: 58 }, { l: "Population Impact", v: 61 }, { l: "Budget Efficiency", v: 72 }],
+  },
+];
+
+const tagCls = (t: string) =>
+  t.includes("High") ? "bg-[#ff6900]/10 text-[#ff6900]" : "bg-zinc-100 text-zinc-950";
 
 export default function PriorityScorePage() {
   return (
-    <DashboardLayout>
-      <PageHeader
-        title="Priority Score"
-        subtitle="AI-computed priority scores help you focus on the most critical issues first."
-      />
+    <DashboardLayout title="Priority Scores" subtitle="AI-ranked issues by urgency, impact, and cost-efficiency">
+      {/* Filter pills */}
+      <div className="flex items-center gap-2 mb-5 flex-wrap">
+        {["Highest Score", "Most Citizens Affected", "Lowest Cost"].map(p => (
+          <button key={p} className="shadow-sm rounded-xl bg-white text-[#71717b] text-xs sm:text-sm border border-zinc-200 px-3 sm:px-4 py-2 hover:bg-zinc-50 transition-colors">
+            {p}
+          </button>
+        ))}
+      </div>
 
-      <div className="grid grid-cols-12 gap-4">
-        {/* Overall Score Card */}
-        <div className="col-span-3 bg-white rounded-xl p-5 shadow-sm border border-[#E2E8F0] flex flex-col items-center justify-center text-center">
-          <p className="text-xs text-[#718096] uppercase tracking-wide mb-3">Constituency Priority Score</p>
-          <div className="relative w-28 h-28 mb-3">
-            <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-              <circle cx="50" cy="50" r="40" fill="none" stroke="#EDF2F7" strokeWidth="10" />
-              <circle cx="50" cy="50" r="40" fill="none" stroke="#E74C3C" strokeWidth="10"
-                strokeDasharray={`${(74 / 100) * 251.2} 251.2`} strokeLinecap="round" />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-bold text-[#E74C3C]">74</span>
-              <span className="text-[10px] text-[#718096]">/ 100</span>
+      {/* Summary cards — 2 cols on mobile, 4 on lg */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {scoreCards.map(card => {
+          const Icon = card.icon;
+          return (
+            <div key={card.label} className="shadow-sm rounded-2xl bg-white border border-zinc-200 p-4 sm:p-5">
+              <div className="flex justify-between items-start gap-2">
+                <div className="min-w-0">
+                  <div className="text-[#71717b] text-xs">{card.label}</div>
+                  <div className={`font-semibold text-2xl sm:text-3xl mt-1 sm:mt-2 ${card.valColor || "text-zinc-950"}`}>{card.value}</div>
+                </div>
+                <div className={`size-9 sm:size-11 rounded-xl ${card.iconBg} flex justify-center items-center shrink-0`}>
+                  <Icon className={`size-4 sm:size-5 ${card.iconColor}`} />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        {/* Score distribution */}
+        <div className="shadow-sm rounded-2xl bg-white border border-zinc-200 p-4 sm:p-5">
+          <div className="flex justify-between items-center">
+            <div>
+              <div className="text-[#71717b] text-xs">Score Distribution</div>
+              <div className="flex mt-3 items-end gap-1">
+                {[30, 45, 60, 75, 100].map((h, i) => (
+                  <div key={i} className="rounded-full w-2" style={{ height: h * 0.16 + "px", background: `rgba(255,105,0,${0.3 + i * 0.17})` }} />
+                ))}
+              </div>
+            </div>
+            <div className="size-9 sm:size-11 rounded-xl bg-zinc-100 flex justify-center items-center">
+              <BarChart3 className="size-4 sm:size-5 text-[#ff6900]" />
             </div>
           </div>
-          <span className="text-xs font-semibold bg-[#FEF2F2] text-[#E74C3C] px-3 py-1 rounded-full">High Priority</span>
-          <p className="text-[11px] text-[#A0AEC0] mt-2">↑ 6 pts vs last month</p>
         </div>
+      </div>
 
-        {/* Radar Chart */}
-        <div className="col-span-5 bg-white rounded-xl p-5 shadow-sm border border-[#E2E8F0]">
-          <h3 className="text-sm font-semibold text-[#1A2332] mb-3">Category Priority Breakdown</h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <RadarChart data={radarData} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
-              <PolarGrid stroke="#E2E8F0" />
-              <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: "#718096" }} />
-              <Radar name="Score" dataKey="A" stroke="#2D7A3A" fill="#2D7A3A" fillOpacity={0.2} strokeWidth={2} />
-            </RadarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Ward Score List */}
-        <div className="col-span-4 bg-white rounded-xl p-5 shadow-sm border border-[#E2E8F0]">
-          <h3 className="text-sm font-semibold text-[#1A2332] mb-3">Ward Priority Scores</h3>
-          <div className="space-y-3">
-            {wardScores.map((w) => (
-              <div key={w.ward} className="flex items-center gap-3">
-                <div className="w-16 flex-shrink-0">
-                  <p className="text-xs font-medium text-[#1A2332]">{w.ward}</p>
-                  <p className="text-[10px] text-[#A0AEC0]">{w.issues} issues</p>
+      {/* Main content — stacked on mobile, side-by-side on xl */}
+      <div className="flex flex-col xl:grid xl:grid-cols-[1fr_300px] gap-6">
+        {/* Issues list */}
+        <div className="space-y-4">
+          {issues.map(issue => (
+            <div key={issue.rank} className="shadow-sm rounded-2xl bg-white border border-zinc-200 p-4 sm:p-6">
+              <div className="flex justify-between items-start gap-3">
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className={`size-9 sm:size-10 font-semibold rounded-full text-sm flex justify-center items-center shrink-0 ${issue.bg} ${issue.textColor}`}>
+                    {issue.rank}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      {issue.icon}
+                      <h2 className="font-semibold text-sm sm:text-base leading-snug">{issue.title}</h2>
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium rounded-full bg-zinc-100 text-zinc-950 text-xs px-2 py-0.5">{issue.category}</span>
+                      <span className="font-medium rounded-full bg-zinc-100 text-zinc-950 text-xs px-2 py-0.5">{issue.ward}</span>
+                    </div>
+                  </div>
                 </div>
-                <ScoreBar score={w.score} />
-                <span className={`text-xs font-bold flex-shrink-0 ${
-                  w.trend === "↑" ? "text-[#E74C3C]" : w.trend === "↓" ? "text-[#27AE60]" : "text-[#F5831F]"
-                }`}>{w.trend}</span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className={`size-14 sm:size-[72px] rounded-full bg-white border-8 flex flex-col justify-center items-center ${issue.scoreBorder}`}>
+                    <div className={`font-semibold text-lg sm:text-xl ${issue.scoreText}`}>{issue.score}</div>
+                    <div className="text-[#71717b] text-[9px] sm:text-[10px]">/100</div>
+                  </div>
+                  <ChevronDown className="size-4 sm:size-5 text-[#71717b]" />
+                </div>
+              </div>
+
+              <div className="flex mt-3 flex-wrap gap-2">
+                {issue.tags.map(t => (
+                  <span key={t} className={`font-medium rounded-full text-xs px-2.5 py-1 ${tagCls(t)}`}>{t}</span>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 rounded-xl bg-zinc-100 border border-zinc-200 mt-3 sm:mt-4 p-3 sm:p-4 gap-3">
+                {issue.scores.map(s => (
+                  <div key={s.l}>
+                    <div className="text-[#71717b] text-xs flex justify-between items-center mb-2">
+                      <span>{s.l}</span>
+                      <span className="font-medium">{s.v}%</span>
+                    </div>
+                    <div className="rounded-full bg-white h-2">
+                      <div className="rounded-full bg-[#ff6900] h-2" style={{ width: `${s.v}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Distribution sidebar */}
+        <aside className="xl:sticky xl:top-[96px] shadow-sm rounded-2xl bg-white border border-zinc-200 p-5 sm:p-6 h-fit">
+          <div className="flex justify-between items-center mb-1">
+            <div className="font-semibold text-base sm:text-lg">Score Distribution</div>
+            <BarChart3 className="size-5 text-[#ff6900]" />
+          </div>
+          <div className="text-[#71717b] text-sm mb-4 sm:mb-5">Across all issues</div>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={distData} layout="vertical" margin={{ top: 0, right: 10, left: 10, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f4f4f5" horizontal={false} />
+              <XAxis type="number" tick={{ fontSize: 10, fill: "#71717b" }} axisLine={false} tickLine={false} />
+              <YAxis dataKey="range" type="category" tick={{ fontSize: 10, fill: "#71717b" }} axisLine={false} tickLine={false} width={45} />
+              <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #e4e4e7" }} />
+              <Bar dataKey="count" name="Issues" fill="#ff6900" radius={[0,4,4,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+          <div className="mt-4 sm:mt-5 pt-4 border-t border-zinc-200 flex flex-col gap-3">
+            {[
+              { range: "High (80–100)", count: 64, color: "#ff6900" },
+              { range: "Medium (60–79)", count: 121, color: "#f97316" },
+              { range: "Low (<60)", count: 63, color: "#a1a1aa" },
+            ].map(item => (
+              <div key={item.range} className="flex items-center justify-between text-xs">
+                <span className="flex items-center gap-2 text-[#71717b]">
+                  <span className="size-2 rounded-full" style={{ background: item.color }} />
+                  {item.range}
+                </span>
+                <span className="font-semibold text-zinc-950">{item.count} issues</span>
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Bar chart – scoring factors */}
-        <div className="col-span-12 bg-white rounded-xl p-5 shadow-sm border border-[#E2E8F0]">
-          <h3 className="text-sm font-semibold text-[#1A2332] mb-4">Scoring Factors by Ward</h3>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart
-              data={wardScores.map((w) => ({ name: w.ward, score: w.score, issues: Math.round(w.issues / 10) }))}
-              margin={{ top: 5, right: 10, left: -20, bottom: 0 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#F0F0F0" vertical={false} />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#A0AEC0" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: "#A0AEC0" }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #E2E8F0" }} />
-              <Bar dataKey="score" name="Priority Score" fill="#E74C3C" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="issues" name="Issue Density (×10)" fill="#2D7A3A" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        </aside>
       </div>
     </DashboardLayout>
   );

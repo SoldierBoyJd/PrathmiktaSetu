@@ -42,49 +42,54 @@
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
-
-  /* Prathmikta Setu Brand Colors */
-  --color-brand-primary: #2D7A3A;
-  --color-brand-secondary: #F5831F;
-  --color-brand-success: #27AE60;
-  --color-brand-warning: #F39C12;
-  --color-brand-danger: #E74C3C;
-  --color-brand-info: #2980B9;
 }
 
 :root {
-  --background: #F5F7FA;
-  --foreground: #1A2332;
-  --card: #FFFFFF;
-  --card-foreground: #1A2332;
-  --popover: #FFFFFF;
-  --popover-foreground: #1A2332;
-  --primary: #2D7A3A;
-  --primary-foreground: #FFFFFF;
-  --secondary: #F5F7FA;
-  --secondary-foreground: #4A5568;
-  --muted: #EDF2F7;
-  --muted-foreground: #718096;
-  --accent: #E8F5E9;
-  --accent-foreground: #2D7A3A;
-  --destructive: #E74C3C;
-  --border: #E2E8F0;
-  --input: #E2E8F0;
-  --ring: #2D7A3A;
-  --chart-1: #2D7A3A;
-  --chart-2: #F5831F;
-  --chart-3: #2980B9;
-  --chart-4: #E74C3C;
+  /* Brand colors matching all screens */
+  --brand-orange: #ff6900;
+  --brand-green: #1E8E3E;
+  --brand-blue: #1E88E5;
+  --brand-red: #e7000b;
+
+  /* Page & surface */
+  --background: #F8FAF8;
+  --foreground: #09090b;
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  --popover: #ffffff;
+  --popover-foreground: #09090b;
+
+  /* Primary = orange (matches all 9 screens) */
+  --primary: #ff6900;
+  --primary-foreground: #fff7ed;
+
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717b;
+  --accent: #fff7ed;
+  --accent-foreground: #ff6900;
+  --destructive: #e7000b;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #ff6900;
+
+  --chart-1: #ff6900;
+  --chart-2: #1E8E3E;
+  --chart-3: #1E88E5;
+  --chart-4: #e7000b;
   --chart-5: #9B59B6;
+
   --radius: 0.5rem;
-  --sidebar: #FFFFFF;
-  --sidebar-foreground: #4A5568;
-  --sidebar-primary: #2D7A3A;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E8F5E9;
-  --sidebar-accent-foreground: #2D7A3A;
-  --sidebar-border: #E2E8F0;
-  --sidebar-ring: #2D7A3A;
+
+  --sidebar: #fafafa;
+  --sidebar-foreground: #3f3f46;
+  --sidebar-primary: #ff6900;
+  --sidebar-primary-foreground: #fff7ed;
+  --sidebar-accent: #fff7ed;
+  --sidebar-accent-foreground: #ff6900;
+  --sidebar-border: #e4e4e7;
+  --sidebar-ring: #ff6900;
 }
 
 @layer base {
@@ -98,21 +103,21 @@
   }
 }
 
-/* Scrollbar */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #F5F7FA;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E0;
-  border-radius: 3px;
+  background: #d4d4d8;
+  border-radius: 99px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #A0AEC0;
+  background: #a1a1aa;
 }

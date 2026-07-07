@@ -1,49 +1,81 @@
 "use client";
 
-import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion } from "framer-motion";
-import { Loader2, Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Loader2, Eye, EyeOff, Mail, Lock, Waypoints } from "lucide-react";
 import { toast } from "sonner";
+import { useState, Suspense } from "react";
+import { useAuthStore } from "@/lib/store/useAuthStore";
+import { getDefaultRoute } from "@/lib/routes";
 
-const loginSchema = z.object({
+const schema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
   password: z.string().min(1, { message: "Password is required." }),
 });
+type FormValues = z.infer<typeof schema>;
 
-type LoginFormValues = z.infer<typeof loginSchema>;
+// Mock user data for demo — replace with real API call
+const DEMO_USERS = {
+  mp: {
+    id: 1,
+    email: "raghav@parliament.in",
+    full_name: "Raghav Sharma",
+    role: "mp" as const,
+  },
+  citizen: {
+    id: 2,
+    email: "priya@citizen.in",
+    full_name: "Priya Sharma",
+    role: "citizen" as const,
+  },
+};
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("from");
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  const [showPwd, setShowPwd] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<"mp" | "citizen">("mp");
+
+  const { setAuth } = useAuthStore();
+
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
+    resolver: zodResolver(schema),
     defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = async (data: LoginFormValues) => {
-    setIsLoading(true);
+  const handleLogin = async (role: "mp" | "citizen") => {
+    setLoading(true);
     try {
-      // Simulate login for demo
-      await new Promise((r) => setTimeout(r, 1000));
-      toast.success("Successfully logged in!");
-      router.push("/dashboard");
+      await new Promise(r => setTimeout(r, 900));
+
+      const user = DEMO_USERS[role];
+
+      // Set auth: user + mock tokens
+      setAuth(user, "mock-access-token-" + Date.now(), "mock-refresh-token");
+
+      toast.success(`Welcome back, ${user.full_name.split(" ")[0]}!`);
+
+      // Redirect: use 'from' param if it's appropriate for the role, otherwise use default
+      const destination = redirectTo && !redirectTo.startsWith("/login")
+        ? redirectTo
+        : getDefaultRoute(role);
+
+      router.push(destination);
     } catch {
-      toast.error("Failed to log in. Please check your credentials.");
+      toast.error("Failed to log in. Please try again.");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
+
+  const onSubmit = async () => handleLogin(selectedRole);
 
   return (
     <motion.div
@@ -51,120 +83,180 @@ export default function LoginPage() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-2 mb-6 lg:hidden">
-          <div className="w-8 h-8 rounded-lg bg-[#2D7A3A] flex items-center justify-center">
-            <span className="text-white font-bold text-sm">PS</span>
-          </div>
-          <p className="text-sm font-bold text-[#2D7A3A] uppercase tracking-wide">Prathmikta Setu</p>
+      {/* Mobile logo */}
+      <div className="flex items-center gap-2 mb-8 lg:hidden">
+        <div className="size-8 rounded-lg bg-[#ff6900] flex items-center justify-center">
+          <Waypoints className="size-4 text-orange-50" />
         </div>
-        <h1 className="text-2xl font-bold text-[#1A2332] mb-1">Welcome back</h1>
-        <p className="text-sm text-[#718096]">Sign in to your Prathmikta Setu account</p>
+        <p className="text-sm font-bold text-zinc-950 uppercase tracking-wide">
+          Prathmikta Setu
+        </p>
       </div>
 
-      {/* Form card */}
-      <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] p-7">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-zinc-950 mb-1">Welcome back</h1>
+        <p className="text-sm text-[#71717b]">
+          Sign in to your Prathmikta Setu account
+        </p>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-sm border border-zinc-200 p-7">
+        {/* Role Selector */}
+        <div className="mb-5">
+          <p className="text-xs font-semibold text-zinc-700 mb-2">Sign in as</p>
+          <div className="grid grid-cols-2 gap-2">
+            {([
+              ["mp", "🏛️ MP / Official"],
+              ["citizen", "👤 Citizen"],
+            ] as const).map(([val, label]) => (
+              <button
+                key={val}
+                type="button"
+                onClick={() => setSelectedRole(val)}
+                className={`py-2.5 rounded-xl text-sm font-semibold transition-all border ${
+                  selectedRole === val
+                    ? "bg-[#ff6900] text-orange-50 border-[#ff6900]"
+                    : "bg-zinc-50 text-zinc-600 border-zinc-200 hover:border-zinc-300"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {/* Email */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#4A5568]" htmlFor="email">
+            <label className="text-xs font-semibold text-zinc-700" htmlFor="email">
               Email Address
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A0AEC0]" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#71717b]" />
               <input
                 id="email"
                 type="email"
-                placeholder="r.sharma@parliament.in"
-                className={`w-full pl-9 pr-3 h-11 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D7A3A]/30 focus:border-[#2D7A3A] transition-colors ${
-                  errors.email ? "border-[#E74C3C]" : "border-[#E2E8F0]"
+                placeholder={
+                  selectedRole === "mp"
+                    ? "r.sharma@parliament.in"
+                    : "priya@citizen.in"
+                }
+                className={`w-full pl-9 pr-3 h-11 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff6900]/30 focus:border-[#ff6900] transition-colors ${
+                  errors.email ? "border-red-400" : "border-zinc-200"
                 }`}
                 {...register("email")}
                 autoFocus
               />
             </div>
             {errors.email && (
-              <p className="text-xs text-[#E74C3C] font-medium">{errors.email.message}</p>
+              <p className="text-xs text-red-500 font-medium">
+                {errors.email.message}
+              </p>
             )}
           </div>
 
-          {/* Password */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold text-[#4A5568]" htmlFor="password">
+              <label
+                className="text-xs font-semibold text-zinc-700"
+                htmlFor="password"
+              >
                 Password
               </label>
               <Link
                 href="/forgot-password"
-                className="text-xs font-semibold text-[#2D7A3A] hover:text-[#246130] transition-colors"
+                className="text-xs font-semibold text-[#ff6900] hover:text-orange-600"
               >
                 Forgot password?
               </Link>
             </div>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A0AEC0]" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#71717b]" />
               <input
                 id="password"
-                type={showPassword ? "text" : "password"}
-                className={`w-full pl-9 pr-10 h-11 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2D7A3A]/30 focus:border-[#2D7A3A] transition-colors ${
-                  errors.password ? "border-[#E74C3C]" : "border-[#E2E8F0]"
+                type={showPwd ? "text" : "password"}
+                className={`w-full pl-9 pr-10 h-11 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff6900]/30 focus:border-[#ff6900] transition-colors ${
+                  errors.password ? "border-red-400" : "border-zinc-200"
                 }`}
                 {...register("password")}
               />
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A0AEC0] hover:text-[#718096]"
+                onClick={() => setShowPwd(!showPwd)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#71717b] hover:text-zinc-700"
                 tabIndex={-1}
               >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showPwd ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </button>
             </div>
             {errors.password && (
-              <p className="text-xs text-[#E74C3C] font-medium">{errors.password.message}</p>
+              <p className="text-xs text-red-500 font-medium">
+                {errors.password.message}
+              </p>
             )}
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
-            disabled={isLoading}
-            className="w-full h-11 bg-[#2D7A3A] hover:bg-[#246130] text-white text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            disabled={loading}
+            className="w-full h-11 bg-[#ff6900] hover:bg-orange-600 text-white text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
           >
-            {isLoading ? (
+            {loading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Signing in…
               </>
             ) : (
-              "Sign In"
+              `Sign In as ${selectedRole === "mp" ? "MP Official" : "Citizen"}`
             )}
           </button>
         </form>
 
-        {/* Divider */}
         <div className="flex items-center gap-3 my-5">
-          <div className="flex-1 h-px bg-[#E2E8F0]" />
-          <span className="text-xs text-[#A0AEC0]">or</span>
-          <div className="flex-1 h-px bg-[#E2E8F0]" />
+          <div className="flex-1 h-px bg-zinc-200" />
+          <span className="text-xs text-[#71717b]">or try a demo account</span>
+          <div className="flex-1 h-px bg-zinc-200" />
         </div>
 
-        {/* Demo access */}
-        <button
-          onClick={() => router.push("/dashboard")}
-          className="w-full h-11 bg-[#F5F7FA] hover:bg-[#E8F5E9] border border-[#E2E8F0] hover:border-[#C6E6CB] text-[#4A5568] hover:text-[#2D7A3A] text-sm font-medium rounded-xl transition-colors"
-        >
-          Continue as Demo User
-        </button>
+        {/* Quick demo buttons */}
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => handleLogin("mp")}
+            disabled={loading}
+            className="h-11 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 text-sm font-medium rounded-xl transition-colors flex items-center justify-center gap-1.5 disabled:opacity-60"
+          >
+            🏛️ Demo MP
+          </button>
+          <button
+            onClick={() => handleLogin("citizen")}
+            disabled={loading}
+            className="h-11 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 text-sm font-medium rounded-xl transition-colors flex items-center justify-center gap-1.5 disabled:opacity-60"
+          >
+            👤 Demo Citizen
+          </button>
+        </div>
       </div>
 
-      <p className="text-center text-sm text-[#718096] mt-6">
+      <p className="text-center text-sm text-[#71717b] mt-6">
         Don&apos;t have an account?{" "}
-        <Link href="/register" className="font-semibold text-[#2D7A3A] hover:text-[#246130]">
+        <Link
+          href="/register"
+          className="font-semibold text-[#ff6900] hover:text-orange-600"
+        >
           Register here
         </Link>
       </p>
     </motion.div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="h-96 animate-pulse bg-zinc-100 rounded-2xl" />}>
+      <LoginForm />
+    </Suspense>
   );
 }
