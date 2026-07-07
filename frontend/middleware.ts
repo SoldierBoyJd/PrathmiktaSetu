@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { isMPRoute, isCitizenRoute } from "@/lib/routes";
+import { isMPRoute, isCitizenRoute } from "./lib/routes";
 
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
