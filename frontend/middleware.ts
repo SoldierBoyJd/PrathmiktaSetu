@@ -1,8 +1,45 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { isMPRoute, isCitizenRoute } from "./lib/routes";
 
-export function proxy(request: NextRequest) {
+// ─── Inlined route lists (Edge Runtime cannot import from @/lib/routes) ──────
+
+const MP_ROUTES = [
+    "/dashboard",
+    "/heatmap",
+    "/analytics",
+    "/complaints",
+    "/recommendations",
+    "/priority-score",
+    "/budget-optimizer",
+    "/emergency-alerts",
+    "/digital-twin",
+    "/reports",
+    "/settings",
+    "/mp/profile",
+];
+
+const CITIZEN_ROUTES = [
+    "/citizen/dashboard",
+    "/citizen/issues",
+    "/citizen/submit",
+    "/citizen/track",
+    "/citizen/transparency",
+    "/citizen/profile",
+];
+
+function isMPRoute(pathname: string): boolean {
+    return MP_ROUTES.some((r) => pathname === r || pathname.startsWith(r + "/"));
+}
+
+function isCitizenRoute(pathname: string): boolean {
+    return CITIZEN_ROUTES.some(
+        (r) => pathname === r || pathname.startsWith(r + "/")
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     const token = request.cookies.get("access_token")?.value;
@@ -11,7 +48,7 @@ export function proxy(request: NextRequest) {
     const mpRoute = isMPRoute(pathname);
     const citizenRoute = isCitizenRoute(pathname);
 
-    // ── 1. Not logged in → redirect to /login ──────────────────────────────────
+    // ── 1. Not logged in → redirect to /login ─────────────────────────────────
     if ((mpRoute || citizenRoute) && !token) {
         const url = request.nextUrl.clone();
         url.pathname = "/login";
