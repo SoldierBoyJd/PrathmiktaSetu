@@ -159,21 +159,21 @@ export default function DigitalTwinPage() {
   return (
     <DashboardLayout title="Digital Twin" subtitle="Interactive simulation of constituency infrastructure for forecasting and impact analysis.">
       {/* Live badge + search */}
-      <div className="flex items-center justify-between gap-4 mb-6">
-        <span className="inline-flex font-medium rounded-full bg-emerald-50 text-emerald-700 text-xs border border-emerald-200 px-3 py-1 items-center gap-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+        <span className="inline-flex font-medium rounded-full bg-emerald-50 text-emerald-700 text-xs border border-emerald-200 px-3 py-1 items-center gap-2 shrink-0">
           <span className="size-2 rounded-full bg-emerald-500" />
           Live Simulation
         </span>
-        <div className="relative w-80">
+        <div className="relative w-full sm:w-72">
           <Search className="pointer-events-none top-1/2 size-4 -translate-y-1/2 text-[#71717b] absolute left-3" />
           <input
-            className="outline-none rounded-xl bg-white text-sm border border-zinc-200 pl-10 pr-4 w-full h-11 focus:ring-1 focus:ring-[#ff6900] focus:border-[#ff6900]"
+            className="outline-none rounded-xl bg-white text-sm border border-zinc-200 pl-10 pr-4 w-full h-10 focus:ring-1 focus:ring-[#ff6900] focus:border-[#ff6900]"
             placeholder="Search wards, projects, or layers"
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-[1fr_320px] gap-6">
+      <div className="flex flex-col xl:grid xl:grid-cols-[1fr_320px] gap-6">
         {/* Left: 3D model + scenario cards + forecast chart */}
         <section className="min-w-0 flex flex-col gap-6">
 
@@ -207,7 +207,7 @@ export default function DigitalTwinPage() {
           </div>
 
           {/* Scenario simulation cards */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {scenarios.map(s => (
               <div key={s.title} className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-4 flex flex-col gap-3 hover:shadow-md hover:border-[#ff6900]/30 transition-all group cursor-pointer">
                 <div className="flex items-center gap-3">
@@ -261,7 +261,7 @@ export default function DigitalTwinPage() {
         </section>
 
         {/* Right: Forecast Impact panel */}
-        <aside className="sticky top-[96px] h-fit">
+        <aside className="xl:sticky xl:top-[96px] h-fit">
           <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-6 flex flex-col gap-5">
             <div className="flex justify-between items-center">
               <div>

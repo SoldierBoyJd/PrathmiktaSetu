@@ -555,7 +555,7 @@ export default function Home() {
             <Link href="/contact" className="hover:text-zinc-950 transition-colors">Contact</Link>
           </div>
           <p className="text-[#71717b] text-xs text-center sm:text-right">
-            © 2025 Prathmikta Setu · Government of India · Constituency Development Cell
+            © 2026 Prathmikta Setu — An Initiative Project by Jainam, Nikhil &amp; Garima
           </p>
         </div>
       </footer>

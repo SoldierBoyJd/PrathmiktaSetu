@@ -74,7 +74,6 @@ export default function DashboardPage() {
           <div className="xl:col-span-8"><RecentComplaints /></div>
           <div className="xl:col-span-4"><AIPriorityRecommendations /></div>
         </div>
-
         {/* Bottom Stats */}
         <BottomStats />
       </div>

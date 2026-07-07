@@ -109,16 +109,16 @@ export default function RecommendationsPage() {
       {/* Cards */}
       <div className="space-y-4">
         {recommendations.map(rec => (
-          <div key={rec.rank} className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-6 hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-start gap-4">
-              <div className="flex items-start gap-3">
-                <div className={cn("size-10 font-semibold rounded-full text-sm flex justify-center items-center", rec.rank <= 2 ? "bg-[#ff6900] text-orange-50" : "bg-[#ff6900]/10 text-[#ff6900]")}>
+          <div key={rec.rank} className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-start gap-3">
+              <div className="flex items-start gap-3 min-w-0">
+                <div className={cn("size-9 sm:size-10 font-semibold rounded-full text-sm flex justify-center items-center shrink-0", rec.rank <= 2 ? "bg-[#ff6900] text-orange-50" : "bg-[#ff6900]/10 text-[#ff6900]")}>
                   {rec.rank}
                 </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className={cn("size-8 rounded-lg flex items-center justify-center", rec.iconBg)}>{rec.icon}</div>
-                    <h3 className="font-semibold text-lg" dangerouslySetInnerHTML={{ __html: rec.title }} />
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <div className={cn("size-7 sm:size-8 rounded-lg flex items-center justify-center shrink-0", rec.iconBg)}>{rec.icon}</div>
+                    <h3 className="font-semibold text-sm sm:text-base leading-snug" dangerouslySetInnerHTML={{ __html: rec.title }} />
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium rounded-full bg-zinc-100 text-zinc-950 text-xs px-2 py-0.5">{rec.category}</span>
@@ -126,9 +126,10 @@ export default function RecommendationsPage() {
                   </div>
                 </div>
               </div>
-              <div className={cn("size-[72px] rounded-full bg-white border-8 flex-shrink-0 flex flex-col justify-center items-center", rec.scoreCls)}>
-                <span className={cn("font-semibold text-xl", rec.rank <= 2 ? "text-[#ff6900]" : "text-zinc-950")}>{rec.score}</span>
-                <span className="text-[#71717b] text-[10px]">/100</span>
+              {/* Score circle — smaller on mobile */}
+              <div className={cn("size-14 sm:size-[72px] rounded-full bg-white border-[6px] sm:border-8 flex-shrink-0 flex flex-col justify-center items-center", rec.scoreCls)}>
+                <span className={cn("font-semibold text-lg sm:text-xl", rec.rank <= 2 ? "text-[#ff6900]" : "text-zinc-950")}>{rec.score}</span>
+                <span className="text-[#71717b] text-[9px] sm:text-[10px]">/100</span>
               </div>
             </div>
 

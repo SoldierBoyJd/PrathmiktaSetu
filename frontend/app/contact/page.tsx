@@ -328,7 +328,7 @@ export default function ContactPage() {
             <span className="font-bold text-zinc-950 text-sm">Prathmikta Setu</span>
           </div>
           <p className="text-[#71717b] text-xs">
-            © 2025 Prathmikta Setu · Government of India · Constituency Development Cell
+            © 2026 Prathmikta Setu — An Initiative Project by Jainam, Nikhil &amp; Garima
           </p>
         </div>
       </footer>
