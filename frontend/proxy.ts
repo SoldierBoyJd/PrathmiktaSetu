@@ -39,7 +39,8 @@ function isCitizenRoute(pathname: string): boolean {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function middleware(request: NextRequest) {
+// Next.js 16: export function must be named `proxy` (middleware.ts is deprecated)
+export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     const token = request.cookies.get("access_token")?.value;
@@ -79,7 +80,6 @@ export const config = {
          * Match all request paths EXCEPT:
          * - _next/static, _next/image (Next.js internals)
          * - favicon.ico, public assets
-         * - api routes
          */
         "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
     ],
