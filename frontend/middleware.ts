@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// ─── Inlined route lists (Edge Runtime cannot import from @/lib/routes) ──────
+// ─── Inlined route lists ──────────────────────────────────────────────────────
+// Do NOT import from @/lib/routes — that module can't be resolved in this context.
 
 const MP_ROUTES = [
     "/dashboard",
@@ -39,8 +40,7 @@ function isCitizenRoute(pathname: string): boolean {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Next.js 16: export function must be named `proxy` (middleware.ts is deprecated)
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     const token = request.cookies.get("access_token")?.value;
@@ -76,11 +76,6 @@ export function proxy(request: NextRequest) {
 
 export const config = {
     matcher: [
-        /*
-         * Match all request paths EXCEPT:
-         * - _next/static, _next/image (Next.js internals)
-         * - favicon.ico, public assets
-         */
         "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
     ],
 };
