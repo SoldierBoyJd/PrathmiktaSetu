@@ -2,7 +2,8 @@
 
 /**
  * /citizen/issues/[id]
- * Wrapped by CitizenLayout. Renders issue detail WITHOUT its own sidebar/header.
+ * Wrapped by CitizenLayout from app/citizen/layout.tsx.
+ * Renders issue detail WITHOUT its own sidebar/header.
  */
 
 import Link from "next/link";
@@ -48,7 +49,7 @@ export default function CitizenIssueDetailPage() {
                   </h1>
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 shrink-0 flex-wrap">
                 <span className="font-semibold rounded-full bg-amber-100 text-amber-700 text-xs px-3 py-1 flex items-center gap-1.5">
                   <span className="size-1.5 rounded-full bg-amber-500" />In Progress
                 </span>
@@ -69,7 +70,12 @@ export default function CitizenIssueDetailPage() {
               <span className="font-semibold text-sm mb-3 block">Submitted Photos</span>
               <div className="grid grid-cols-3 gap-3">
                 {["Road damage", "Waterlogging", "More photos"].map((label, i) => (
-                  <div key={label} className={`relative rounded-xl border border-zinc-200 overflow-hidden ${i === 0 ? "col-span-2 aspect-video" : "aspect-video"} bg-zinc-100 flex items-center justify-center`}>
+                  <div
+                    key={label}
+                    className={`relative rounded-xl border border-zinc-200 overflow-hidden ${
+                      i === 0 ? "col-span-2 aspect-video" : "aspect-video"
+                    } bg-zinc-100 flex items-center justify-center`}
+                  >
                     <span className="text-[#71717b] text-xs">{label}</span>
                     {i === 2 && (
                       <div className="bg-zinc-950/50 flex absolute inset-0 justify-center items-center">
@@ -94,7 +100,11 @@ export default function CitizenIssueDetailPage() {
                   </button>
                   <div className="flex items-end flex-1 gap-0.5 h-8 overflow-hidden">
                     {[3,5,7,4,6,3,5,7,4,6,3,5].map((h, i) => (
-                      <span key={i} className={`rounded-full w-1 ${i < 6 ? "bg-[#ff6900]" : "bg-[#ff6900]/40"}`} style={{ height: `${h * 4}px` }} />
+                      <span
+                        key={i}
+                        className={`rounded-full w-1 ${i < 6 ? "bg-[#ff6900]" : "bg-[#ff6900]/40"}`}
+                        style={{ height: `${h * 4}px` }}
+                      />
                     ))}
                   </div>
                   <span className="text-[#71717b] text-xs">0:42</span>
@@ -103,7 +113,9 @@ export default function CitizenIssueDetailPage() {
               <div className="relative rounded-xl border border-zinc-200 overflow-hidden h-[100px] bg-zinc-100 flex items-center justify-center">
                 <div className="flex flex-col items-center">
                   <MapPin className="size-8 text-[#ff6900] drop-shadow" />
-                  <span className="font-medium rounded-full bg-white/90 text-[11px] mt-1 px-2 py-0.5">MG Road, Sector 14</span>
+                  <span className="font-medium rounded-full bg-white/90 text-[11px] mt-1 px-2 py-0.5">
+                    MG Road, Sector 14
+                  </span>
                 </div>
               </div>
             </div>
@@ -117,27 +129,47 @@ export default function CitizenIssueDetailPage() {
             </div>
             <ol className="flex flex-col">
               {[
-                { done: true,   label: "Submitted",   sub: "Citizen Portal · 12 Aug 2024, 09:14 AM" },
-                { done: true,   label: "Under Review", sub: "Grievance Cell · 12 Aug 2024, 02:40 PM" },
-                { done: true,   label: "Assigned",    sub: "PWD, Roads Division · 13 Aug 2024, 11:05 AM" },
-                { done: false, active: true,  label: "In Progress", sub: "PWD, Roads Division · 15 Aug 2024, 08:30 AM" },
+                { done: true,            label: "Submitted",    sub: "Citizen Portal · 12 Aug 2024, 09:14 AM" },
+                { done: true,            label: "Under Review", sub: "Grievance Cell · 12 Aug 2024, 02:40 PM" },
+                { done: true,            label: "Assigned",     sub: "PWD, Roads Division · 13 Aug 2024, 11:05 AM" },
+                { done: false, active:  true, label: "In Progress", sub: "PWD, Roads Division · 15 Aug 2024, 08:30 AM" },
                 { done: false, pending: true, label: "Resolved",    sub: "Pending completion" },
               ].map((step, i, arr) => (
                 <li key={step.label} className={`relative flex gap-4 ${i < arr.length - 1 ? "pb-5" : ""}`}>
                   {i < arr.length - 1 && (
-                    <span className={`absolute left-[15px] top-8 bottom-0 w-px ${step.done ? "bg-[#1E8E3E]" : "bg-zinc-200"}`} />
+                    <span
+                      className={`absolute left-[15px] top-8 bottom-0 w-px ${
+                        step.done ? "bg-[#1E8E3E]" : "bg-zinc-200"
+                      }`}
+                    />
                   )}
-                  <span className={`size-8 shrink-0 z-10 rounded-full flex justify-center items-center ${
-                    step.done   ? "bg-[#1E8E3E]" :
-                    step.active ? "bg-[#ff6900] ring-4 ring-[#ff6900]/15" :
-                    "bg-zinc-100 border border-zinc-200"
-                  }`}>
-                    {step.done   ? <Check className="size-4 text-white" /> :
-                     step.active ? <Loader className="size-4 text-orange-50" /> :
-                     <Flag className="size-4 text-[#71717b]" />}
+                  <span
+                    className={`size-8 shrink-0 z-10 rounded-full flex justify-center items-center ${
+                      step.done
+                        ? "bg-[#1E8E3E]"
+                        : step.active
+                        ? "bg-[#ff6900] ring-4 ring-[#ff6900]/15"
+                        : "bg-zinc-100 border border-zinc-200"
+                    }`}
+                  >
+                    {step.done ? (
+                      <Check className="size-4 text-white" />
+                    ) : step.active ? (
+                      <Loader className="size-4 text-orange-50" />
+                    ) : (
+                      <Flag className="size-4 text-[#71717b]" />
+                    )}
                   </span>
-                  <div className="flex flex-col gap-0.5">
-                    <span className={`font-semibold text-sm ${step.active ? "text-[#ff6900]" : step.pending ? "text-[#71717b]" : "text-zinc-950"}`}>
+                  <div className="flex flex-col gap-0.5 pt-0.5">
+                    <span
+                      className={`font-semibold text-sm ${
+                        step.active
+                          ? "text-[#ff6900]"
+                          : step.pending
+                          ? "text-[#71717b]"
+                          : "text-zinc-950"
+                      }`}
+                    >
                       {step.label}
                     </span>
                     <span className="text-[#71717b] text-xs">{step.sub}</span>
@@ -149,7 +181,7 @@ export default function CitizenIssueDetailPage() {
 
           {/* Community Discussion */}
           <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-5 sm:p-6 flex flex-col gap-4">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center flex-wrap gap-2">
               <div>
                 <h2 className="font-semibold text-base">Community Discussion</h2>
                 <p className="text-[#71717b] text-xs">Citizen updates &amp; official responses</p>
@@ -158,9 +190,27 @@ export default function CitizenIssueDetailPage() {
             </div>
 
             {[
-              { initials: "AK", name: "Anil Kumar",  role: "Resident",   time: "2 days ago", comment: "This junction is genuinely dangerous after rain. Please prioritise the drainage as well.", likes: 24,
-                official: { name: "PWD Roads Division", time: "1 day ago", reply: "Drainage survey added to work order. Resurfacing crew scheduled this week." } },
-              { initials: "PM", name: "Priya Menon", role: "Shopkeeper", time: "3 days ago", comment: "Business has dropped because customers avoid this stretch. Glad to see it being addressed.", likes: 18 },
+              {
+                initials: "AK",
+                name: "Anil Kumar",
+                role: "Resident",
+                time: "2 days ago",
+                comment: "This junction is genuinely dangerous after rain. Please prioritise the drainage as well.",
+                likes: 24,
+                official: {
+                  name: "PWD Roads Division",
+                  time: "1 day ago",
+                  reply: "Drainage survey added to work order. Resurfacing crew scheduled this week.",
+                },
+              },
+              {
+                initials: "PM",
+                name: "Priya Menon",
+                role: "Shopkeeper",
+                time: "3 days ago",
+                comment: "Business has dropped because customers avoid this stretch. Glad to see it being addressed.",
+                likes: 18,
+              },
             ].map((comment) => (
               <div key={comment.name} className="flex gap-3">
                 <div className="size-9 shrink-0 rounded-full bg-[#ff6900]/10 flex items-center justify-center font-semibold text-[#ff6900] text-xs">
@@ -174,10 +224,10 @@ export default function CitizenIssueDetailPage() {
                   </div>
                   <p className="text-[#71717b] text-sm leading-relaxed">{comment.comment}</p>
                   <div className="flex items-center gap-4 pt-1">
-                    <button className="text-[#71717b] text-xs flex items-center gap-1.5 hover:text-[#ff6900]">
+                    <button className="text-[#71717b] text-xs flex items-center gap-1.5 hover:text-[#ff6900] transition-colors">
                       <ThumbsUp className="size-3.5" />{comment.likes}
                     </button>
-                    <button className="text-[#71717b] text-xs flex items-center gap-1.5 hover:text-[#ff6900]">
+                    <button className="text-[#71717b] text-xs flex items-center gap-1.5 hover:text-[#ff6900] transition-colors">
                       <MessageCircle className="size-3.5" />Reply
                     </button>
                   </div>
@@ -197,6 +247,7 @@ export default function CitizenIssueDetailPage() {
               </div>
             ))}
 
+            {/* Reply input */}
             <div className="flex gap-3">
               <div className="size-9 shrink-0 rounded-full bg-[#ff6900] flex items-center justify-center font-semibold text-orange-50 text-xs">
                 PS
@@ -220,16 +271,19 @@ export default function CitizenIssueDetailPage() {
             <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-5 flex flex-col gap-3">
               <h3 className="font-semibold text-sm">Issue Details</h3>
               {[
-                { label: "Status",      value: "In Progress",              cls: "text-amber-600 font-semibold" },
-                { label: "Priority",    value: "High",                     cls: "text-[#ff6900] font-semibold" },
+                { label: "Status",      value: "In Progress",          cls: "text-amber-600 font-semibold" },
+                { label: "Priority",    value: "High",                 cls: "text-[#ff6900] font-semibold" },
                 { label: "Category",    value: "Roads & Infrastructure" },
                 { label: "Ward",        value: "Sector 14, Gurugram" },
                 { label: "Reported",    value: "12 Aug 2024, 09:14 AM" },
                 { label: "Assigned to", value: "PWD, Roads Division" },
-              ].map(item => (
-                <div key={item.label} className="flex justify-between items-center border-b border-zinc-100 pb-2 last:border-0 last:pb-0">
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="flex justify-between items-center border-b border-zinc-100 pb-2 last:border-0 last:pb-0"
+                >
                   <span className="text-xs text-[#71717b]">{item.label}</span>
-                  <span className={`text-xs ${item.cls || "text-zinc-950"}`}>{item.value}</span>
+                  <span className={`text-xs ${item.cls ?? "text-zinc-950"}`}>{item.value}</span>
                 </div>
               ))}
             </div>
@@ -237,8 +291,8 @@ export default function CitizenIssueDetailPage() {
             <div className="bg-[#ff6900]/5 rounded-2xl border border-[#ff6900]/20 p-5">
               <p className="text-xs font-semibold text-[#ff6900] mb-2">AI Analysis</p>
               <p className="text-[#71717b] text-xs leading-relaxed">
-                Priority score <strong className="text-zinc-950">89/100</strong>. Affects ~6,200 daily commuters.
-                Road resurfacing + drainage repair recommended.
+                Priority score <strong className="text-zinc-950">89/100</strong>. Affects ~6,200 daily
+                commuters. Road resurfacing + drainage repair recommended.
               </p>
             </div>
           </div>
