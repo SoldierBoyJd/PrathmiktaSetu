@@ -12,8 +12,14 @@ import {
   Play, Check, Loader, Flag, ThumbsUp, MessageCircle,
   BadgeCheck, Send, Share2,
 } from "lucide-react";
+import { useAuthStore } from "@/lib/store/useAuthStore";
 
 export default function CitizenIssueDetailPage() {
+  const user = useAuthStore((s) => s.user);
+  const userInitials = user
+    ? user.full_name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
+    : "??";
+
   return (
     <div>
       {/* Breadcrumb */}
@@ -250,7 +256,7 @@ export default function CitizenIssueDetailPage() {
             {/* Reply input */}
             <div className="flex gap-3">
               <div className="size-9 shrink-0 rounded-full bg-[#ff6900] flex items-center justify-center font-semibold text-orange-50 text-xs">
-                JD
+                {userInitials}
               </div>
               <div className="flex flex-1 gap-2">
                 <input
