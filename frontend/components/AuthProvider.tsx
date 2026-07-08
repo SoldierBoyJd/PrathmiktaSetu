@@ -25,8 +25,8 @@ const DEMO_USERS: Record<string, User> = {
   },
   citizen: {
     id: 2,
-    email: "priya@citizen.in",
-    full_name: "Priya Sharma",
+    email: "jainam@citizen.in",
+    full_name: "Jainam Doshi",
     role: "citizen",
   },
   admin: {

@@ -55,8 +55,8 @@ const RECENT_ACTIVITY = [
 const LANGUAGES = ["English", "Hindi", "Tamil", "Telugu", "Bengali", "Marathi", "Gujarati"];
 
 export default function CitizenProfilePage() {
-  const [fullName, setFullName] = useState("Priya Sharma");
-  const [email, setEmail] = useState("priya.sharma@example.com");
+  const [fullName, setFullName] = useState("Jainam Doshi");
+  const [email, setEmail] = useState("jainam.doshi@example.com");
   const [phone, setPhone] = useState("+91 98765 43210");
   const [ward, setWard] = useState("Ward 7, Sector 12, New Delhi");
   const [language, setLanguage] = useState("English");

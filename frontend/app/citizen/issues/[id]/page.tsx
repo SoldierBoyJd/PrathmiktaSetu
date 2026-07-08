@@ -250,7 +250,7 @@ export default function CitizenIssueDetailPage() {
             {/* Reply input */}
             <div className="flex gap-3">
               <div className="size-9 shrink-0 rounded-full bg-[#ff6900] flex items-center justify-center font-semibold text-orange-50 text-xs">
-                PS
+                JD
               </div>
               <div className="flex flex-1 gap-2">
                 <input

@@ -469,9 +469,9 @@ export default function Home() {
               {
                 stars: 5,
                 quote: "I reported a broken drainage line by photo and it was fixed within a week. For the first time I felt heard.",
-                name: "Priya Sharma",
+                name: "Jainam Doshi",
                 role: "Resident, Bhopal",
-                initials: "PS",
+                initials: "JD",
               },
               {
                 stars: 5,

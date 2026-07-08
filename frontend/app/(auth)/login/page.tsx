@@ -28,8 +28,8 @@ const DEMO_USERS = {
   },
   citizen: {
     id: 2,
-    email: "priya@citizen.in",
-    full_name: "Priya Sharma",
+    email: "jainam@citizen.in",
+    full_name: "Jainam Doshi",
     role: "citizen" as const,
   },
 };
@@ -138,7 +138,7 @@ function LoginForm() {
                 placeholder={
                   selectedRole === "mp"
                     ? "r.sharma@parliament.in"
-                    : "priya@citizen.in"
+                    : "jainam@citizen.in"
                 }
                 className={`w-full pl-9 pr-3 h-11 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff6900]/30 focus:border-[#ff6900] transition-colors ${
                   errors.email ? "border-red-400" : "border-zinc-200"
